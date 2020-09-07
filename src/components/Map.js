@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { renderToStaticMarkup } from "react-dom/server";
+import { divIcon } from "leaflet";
 import { Map as OsmMap, Marker, Popup, Circle, TileLayer } from 'react-leaflet'
 
 function Map(props) {
+
+  const iconMarkup = renderToStaticMarkup(
+    <span className="custom-marker" />
+  );
+  const customMarkerIcon = divIcon({
+    html: iconMarkup
+  });
 
   const handleClick = (ev) => {
     console.log(ev.latlng);
@@ -17,7 +26,7 @@ function Map(props) {
           //console.log(newGeoloc);
         }
         navigator.geolocation.getCurrentPosition(success);
-      }, 1000);
+      }, 2000);
       return () => clearInterval(interval);
     }, [])
 
@@ -25,7 +34,7 @@ function Map(props) {
     <div className="map-container">
       <OsmMap
         center={[geoloc.lat, geoloc.lng]}
-        zoom={15}
+        zoom={20}
         onclick={handleClick}
         style={{ width: '100%', height: '100%'}} >
         
@@ -34,12 +43,18 @@ function Map(props) {
           attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
         />
 
+        <Marker
+          position={[geoloc.lat, geoloc.lng]}
+          icon={customMarkerIcon}
+        />
+
         <Circle
-          radius={300}
+          radius={30}
           center={[geoloc.lat, geoloc.lng]}
           color={`red`}
+          weight={0}
           fillColor={`#f03`}
-          fillOpacity={`0.5`} />
+          fillOpacity={`0.2`} />
       </OsmMap>
     </div>
   );
