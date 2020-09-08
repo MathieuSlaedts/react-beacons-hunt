@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { renderToStaticMarkup } from "react-dom/server";
 import { divIcon } from "leaflet";
 import { Map as OsmMap, Marker, Popup, Circle, TileLayer } from 'react-leaflet';
+import uid from 'uid';
 
 function PlayMap(props) {
 
@@ -44,7 +45,7 @@ function PlayMap(props) {
   const handleClickOnMap = (ev) => {
     console.log("click on map", ev.latlng);
     const { lat, lng } = ev.latlng;
-    setBeacons(prevBeacons => [...prevBeacons, {lat: lat, lng: lng}]);
+    setBeacons(prevBeacons => [...prevBeacons, {id: uid(), lat: lat, lng: lng}]);
   };
 
   // Hanle click on map
@@ -54,27 +55,26 @@ function PlayMap(props) {
   };
 
   // State - geolocation
-  const [test, setTest] = useState(1);
-  const [test2, setTest2] = useState(1);
+  const [watchD, setWatchD] = useState(1);
   const [geoloc, setGeoloc] = useState({ lat: 50.824257682060185, lng: 4.381259679794312 });
   const [beacons, setBeacons] = useState([
         {
-            id: "0",
+            id: uid(),
             lat: 50.82476598565123,
             lng: 4.380776882171632
         },
         {
-            id: "1",
+            id: uid(),
             lat: 50.82391880992506,
             lng: 4.380873441696168
         },
         {
-            id: "2",
+            id: uid(),
             lat: 50.82384425772526,
             lng: 4.382236003875733
         },
         {
-            id: "3",
+            id: uid(),
             lat: 50.82418313040149,
             lng: 4.381710290908814
         }
@@ -98,22 +98,20 @@ function PlayMap(props) {
 
   // Check distance every .5sec
  useEffect(() => {
-    setTest2(test2 => test2+1);
-    const interval = setInterval(() => {
-        setTest(test => test+1);
+    setWatchD(watchD => watchD+1);
+    /* const interval = setInterval(() => {
         beacons.forEach((el,index) => {
-            console.log(index)
             const dist = getDistance(geoloc.lat, geoloc.lng, el.lat, el.lng, 'K');
+            console.log(dist);
             if(dist < 0.035) {
-                console.log(index);
                 const newBeacons = [...beacons].filter(newBeacon => newBeacon.id !== el.id);
                 setBeacons([...newBeacons]);
             }
         });
-    }, 500);
-    return (beacons) => clearInterval(interval);
+    }, 1000);
+    return () => clearInterval(interval); */
 // eslint-disable-next-line
-}, [beacons, geoloc])
+}, [geoloc])
 
 
   return (
@@ -144,9 +142,8 @@ function PlayMap(props) {
         ))}
       </OsmMap>
       <div className="footer">
-        <p>Geoloc: {geoloc.lat} / {geoloc.lng}</p>
-        <p>Beacons left: {beacons.length}</p>
-        <p>Hors de l'interval: {beacons.length} / dans l'interval: {test}</p>
+          <p>Geoloc: {geoloc.lat} / {geoloc.lng}</p>
+          <p>watch D: {watchD}</p>
       </div>
     </div>
   );
