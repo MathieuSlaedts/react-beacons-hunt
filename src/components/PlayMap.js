@@ -113,7 +113,7 @@ function PlayMap(props) {
     }, 500);
     return (beacons) => clearInterval(interval);
 // eslint-disable-next-line
-}, [beacons])
+}, [beacons, geoloc])
 
 
   return (
@@ -144,6 +144,7 @@ function PlayMap(props) {
         ))}
       </OsmMap>
       <div className="footer">
+        <p>Geoloc: {geoloc.lat} / {geoloc.lng}</p>
         <p>Beacons left: {beacons.length}</p>
         <p>Hors de l'interval: {beacons.length} / dans l'interval: {test}</p>
       </div>
