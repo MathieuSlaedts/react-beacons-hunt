@@ -142,28 +142,50 @@ main:not(.no-pad) {
 
   .custom-marker {
     display: block;
-    height: 40px !important;
-    width: 40px !important;
-    margin-top: -20px !important;
-    margin-left: -20px !important;
+    height: 40px; width: 40px;
+    margin-top: -20px; margin-left: -20px;
     position: absolute;
-    top: 50%;
-    left: 50%;
+    top: 50%; left: 50%;
     border: 2px solid red;
     border-radius: 20px;
 
     &::after {
       content: ' ';
       display: block;
-      height: 4px !important;
-      width: 4px !important;
-      margin-top: -2px !important;
-      margin-left: -2px !important;
+      height: 6px; width: 6px;
+      margin-top: -3px; margin-left: -3px;
       position: absolute;
-      top: 50%;
-      left: 50%;
+      top: 50%; left: 50%;
       border-radius: 20px;
       background: red;
     }
+
+    &::before {
+      content: ' ';
+      display: block;
+      height: 60px; width: 60px;
+      margin-top: -30px; margin-left: -30px;
+      position: absolute;
+      top: 50%; left: 50%;
+      border-radius: 30px;
+      border: 2px solid red;
+      background: rgba(255,255,255, 0.5);
+      z-index: -1;
+    }
+  }
+
+  .custom-marker-beacon {
+    border: 2px solid green;
+
+    &::after {
+      height: 6px; width: 6px;
+      margin-top: -3px; margin-left: -3px;
+      background: green;
+    }
+
+    &::before {
+      border: 2px solid green;
+    }
+
   }
 }

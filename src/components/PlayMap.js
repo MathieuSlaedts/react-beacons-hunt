@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { divIcon } from "leaflet";
 import { Map as OsmMap, Marker, Popup, Circle, TileLayer } from 'react-leaflet';
 
-function Map(props) {
+function PlayMap(props) {
 
   // From https://www.geodatasource.com/developers/javascript
   function getDistance(lat1, lon1, lat2, lon2, unit) {
@@ -55,7 +55,23 @@ function Map(props) {
 
   // State - geolocation
   const [geoloc, setGeoloc] = useState({ lat: 50.824257682060185, lng: 4.381259679794312 });
-  const [beacons, setBeacons] = useState([{lat: 20, lng: 2}, {lat: 50.82424073851184, lng: 4.381710290908814}]);
+  const [beacons, setBeacons] = useState([
+        {
+            id: "0",
+            lat: 50.82476598565123,
+            lng: 4.380776882171632
+        },
+        {
+            id: "1",
+            lat: 50.82391880992506,
+            lng: 4.380873441696168
+        },
+        {
+            id: "2",
+            lat: 50.82384425772526,
+            lng: 4.382236003875733
+        }
+    ]);
 
   // Update Geolocation in state every .5sec
  useEffect(() => {
@@ -64,8 +80,13 @@ function Map(props) {
         setGeoloc({lat: newGeoloc.latitude, lng: newGeoloc.longitude});
 
         beacons.forEach((el,index) => {
-          const dist = getDistance(geoloc.lat, geoloc.lng, el.lat, el.lng, 'K');
-          if(dist < 0.035) {console.log("beacon: ", index)}
+            const dist = getDistance(geoloc.lat, geoloc.lng, el.lat, el.lng, 'K');
+            if(dist < 0.02) {
+                console.log("beacon: ", el.id)
+                alert(el.id);
+                const newBeacons = [...beacons].filter(newBeacon => newBeacon.id !== el.id);
+                setBeacons([...newBeacons]);
+            }
         });
       }
       const handleError = (error) => {
@@ -75,6 +96,7 @@ function Map(props) {
       const watchId = navigator.geolocation.watchPosition(handleSuccess, handleError);
     return () => navigator.geolocation.clearWatch(watchId);
   }, [])
+
 
   return (
     <div className="map-container">
@@ -102,17 +124,9 @@ function Map(props) {
           onclick={handleClickOnBeacon}
         />
         ))}
-
-        {/* <Circle
-          radius={30}
-          center={[geoloc.lat, geoloc.lng]}
-          color={`red`}
-          weight={0}
-          fillColor={`#f03`}
-          fillOpacity={`0.2`} /> */}
       </OsmMap>
     </div>
   );
 }
 
-export default Map;
+export default PlayMap;
