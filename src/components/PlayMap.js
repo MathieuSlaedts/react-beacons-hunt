@@ -70,24 +70,19 @@ function PlayMap(props) {
             id: "2",
             lat: 50.82384425772526,
             lng: 4.382236003875733
+        },
+        {
+            id: "3",
+            lat: 50.82418313040149,
+            lng: 4.381710290908814
         }
     ]);
 
-  // Update Geolocation in state every .5sec
+  // Set and Update Geolocation
  useEffect(() => {
       function handleSuccess(pos) {
         var newGeoloc = pos.coords;
         setGeoloc({lat: newGeoloc.latitude, lng: newGeoloc.longitude});
-
-        beacons.forEach((el,index) => {
-            const dist = getDistance(geoloc.lat, geoloc.lng, el.lat, el.lng, 'K');
-            if(dist < 0.02) {
-                console.log("beacon: ", el.id)
-                alert(el.id);
-                const newBeacons = [...beacons].filter(newBeacon => newBeacon.id !== el.id);
-                setBeacons([...newBeacons]);
-            }
-        });
       }
       const handleError = (error) => {
         console.log(error.message);
@@ -96,6 +91,25 @@ function PlayMap(props) {
       const watchId = navigator.geolocation.watchPosition(handleSuccess, handleError);
     return () => navigator.geolocation.clearWatch(watchId);
   }, [])
+
+
+
+  // Check distance every .5sec
+ useEffect(() => {
+    const interval = setInterval(() => {
+
+        beacons.forEach((el,index) => {
+            const dist = getDistance(geoloc.lat, geoloc.lng, el.lat, el.lng, 'K');
+            if(dist < 0.035) {
+                console.log("beacon: ", el.id)
+                //alert(el.id);
+                const newBeacons = [...beacons].filter(newBeacon => newBeacon.id !== el.id);
+                setBeacons([...newBeacons]);
+            }
+        });
+    }, 500);
+    return () => clearInterval(interval);
+}, [])
 
 
   return (
