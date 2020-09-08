@@ -102,10 +102,10 @@ function PlayMap(props) {
     const interval = setInterval(() => {
         setTest(test => test+1);
         beacons.forEach((el,index) => {
+            console.log(index)
             const dist = getDistance(geoloc.lat, geoloc.lng, el.lat, el.lng, 'K');
             if(dist < 0.035) {
-                // console.log("beacon: ", el.id)
-                //alert(el.id);
+                console.log(index);
                 const newBeacons = [...beacons].filter(newBeacon => newBeacon.id !== el.id);
                 setBeacons([...newBeacons]);
             }
@@ -113,7 +113,7 @@ function PlayMap(props) {
     }, 500);
     return (beacons) => clearInterval(interval);
 // eslint-disable-next-line
-}, [geoloc])
+}, [beacons])
 
 
   return (
