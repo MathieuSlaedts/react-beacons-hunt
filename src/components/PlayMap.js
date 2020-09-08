@@ -51,7 +51,7 @@ function PlayMap(props) {
   // Hanle click on map
   // Todo: remove the beacon if create trail
   const handleClickOnBeacon = (ev) => {
-    console.log("click on beacon");
+    console.log("click on beacon", ev);
   };
 
   // State - geolocation
@@ -96,18 +96,22 @@ function PlayMap(props) {
 
 
 
-  // Check distance every .5sec
- useEffect(() => {
-    setWatchD(watchD => watchD+1);
-    beacons.forEach((el,index) => {
-        const dist = getDistance(geoloc.lat, geoloc.lng, el.lat, el.lng, 'K');
-        if(dist < 0.035) {
-            const newBeacons = [...beacons].filter(newBeacon => newBeacon.id !== el.id);
-            setBeacons([...newBeacons]);
+    // Check distance every .5sec
+    useEffect(() => {
+        setWatchD(watchD => watchD+1);
+        if(beacons.length === 0) {
+            alert("win");
+            return;
         }
-    });
-// eslint-disable-next-line
-}, [geoloc])
+        beacons.forEach((el,index) => {
+            const dist = getDistance(geoloc.lat, geoloc.lng, el.lat, el.lng, 'K');
+            if(dist < 0.035) {
+                const newBeacons = [...beacons].filter(newBeacon => newBeacon.id !== el.id);
+                setBeacons([...newBeacons]);
+            }
+        });
+    // eslint-disable-next-line
+    }, [geoloc])
 
 
   return (
@@ -130,7 +134,8 @@ function PlayMap(props) {
 
         {beacons.map((el, index) => (
           <Marker
-          key={index}
+          key={el.id}
+          kid={el.id}
           position={[el.lat, el.lng]}
           icon={customMarkerBeacon}
           onclick={handleClickOnBeacon}
