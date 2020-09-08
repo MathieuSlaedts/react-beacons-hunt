@@ -55,6 +55,7 @@ function PlayMap(props) {
 
   // State - geolocation
   const [test, setTest] = useState(1);
+  const [test2, setTest2] = useState(1);
   const [geoloc, setGeoloc] = useState({ lat: 50.824257682060185, lng: 4.381259679794312 });
   const [beacons, setBeacons] = useState([
         {
@@ -97,6 +98,7 @@ function PlayMap(props) {
 
   // Check distance every .5sec
  useEffect(() => {
+    setTest2(test2 => test2+1);
     const interval = setInterval(() => {
         setTest(test => test+1);
         beacons.forEach((el,index) => {
@@ -110,7 +112,8 @@ function PlayMap(props) {
         });
     }, 500);
     return (beacons) => clearInterval(interval);
-}, [])
+// eslint-disable-next-line
+}, [geoloc])
 
 
   return (
@@ -141,7 +144,8 @@ function PlayMap(props) {
         ))}
       </OsmMap>
       <div className="footer">
-        <p>Beacons left: {beacons.length} / test: {test}</p>
+        <p>Beacons left: {beacons.length}</p>
+        <p>Hors de l'interval: {beacons.length} / dans l'interval: {test}</p>
       </div>
     </div>
   );
