@@ -1,41 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import { renderToStaticMarkup } from "react-dom/server";
 import { divIcon } from "leaflet";
-import { Map as OsmMap, Marker, Popup, Circle, TileLayer } from 'react-leaflet'
+import { Map as OsmMap, Marker, Popup, Circle, TileLayer } from 'react-leaflet';
 
 function Map(props) {
 
-  const iconMarkup = renderToStaticMarkup(
-    <span className="custom-marker" />
-  );
+  // Customize Icon Marker
   const customMarkerIcon = divIcon({
-    html: iconMarkup
+    html: renderToStaticMarkup(<span className="custom-marker" />)
   });
 
-  const handleClick = (ev) => {
-    console.log(ev.latlng);
+  // Hanle click on map
+  const handleClickOnMap = (ev) => {
+    //console.log(ev.latlng);
   };
 
+  // State - geolocation
   const [geoloc, setGeoloc] = useState({ lat: 50.8466, lng: 4.3528 });
 
-    useEffect(() => {
-      const interval = setInterval(() => {
-        function success(pos) {
-          var newGeoloc = pos.coords;
-          setGeoloc({lat: newGeoloc.latitude, lng: newGeoloc.longitude});
-          //console.log(newGeoloc);
-        }
-        navigator.geolocation.getCurrentPosition(success);
-      }, 2000);
-      return () => clearInterval(interval);
-    }, [])
+  // Update Geolocation in state every .5sec
+ useEffect(() => {
+      function handleSuccess(pos) {
+        var newGeoloc = pos.coords;
+        setGeoloc({lat: newGeoloc.latitude, lng: newGeoloc.longitude});
+      }
+      const handleError = (error) => {
+        console.log(error.message);
+      };
+      navigator.geolocation.getCurrentPosition(handleSuccess, handleError);
+      const watchId = navigator.geolocation.watchPosition(handleSuccess, handleError);
+    return () => navigator.geolocation.clearWatch(watchId);
+  }, [])
 
   return (
     <div className="map-container">
       <OsmMap
         center={[geoloc.lat, geoloc.lng]}
         zoom={20}
-        onclick={handleClick}
+        onclick={handleClickOnMap}
         style={{ width: '100%', height: '100%'}} >
         
         <TileLayer

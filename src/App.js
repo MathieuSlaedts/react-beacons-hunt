@@ -12,10 +12,10 @@ function App() {
     <Router>
       <div className="App">
 
-      <div className='temp-nav'><div className="container"><Link to="/">Identification</Link> - 
-        <Link to="/registration">Inscription</Link> - 
-        <Link to="/trails">Parcours</Link> - 
-        <Link to="/stats">Stats</Link> - 
+      <div className='temp-nav'><div className="container"><Link to="/">Identification</Link>
+        <Link to="/registration">Inscription</Link>
+        <Link to="/trails">Parcours</Link>
+        <Link to="/stats">Stats</Link>
         <Link to="/new-trail">NewTrail</Link></div></div>
         <Switch>
           <Route exact path="/" component={Login} />

@@ -18,6 +18,11 @@ body {
   height: 2rem;
   line-height: 2rem;
 
+  .container {
+    display: grid;
+    grid-template-columns: auto auto auto auto auto;
+  }
+
   a {
     color: #eee;
   }
