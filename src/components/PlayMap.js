@@ -54,6 +54,7 @@ function PlayMap(props) {
   };
 
   // State - geolocation
+  const [test, setTest] = useState(1);
   const [geoloc, setGeoloc] = useState({ lat: 50.824257682060185, lng: 4.381259679794312 });
   const [beacons, setBeacons] = useState([
         {
@@ -97,18 +98,18 @@ function PlayMap(props) {
   // Check distance every .5sec
  useEffect(() => {
     const interval = setInterval(() => {
-
+        setTest(test => test+1);
         beacons.forEach((el,index) => {
             const dist = getDistance(geoloc.lat, geoloc.lng, el.lat, el.lng, 'K');
             if(dist < 0.035) {
-                console.log("beacon: ", el.id)
+                // console.log("beacon: ", el.id)
                 //alert(el.id);
                 const newBeacons = [...beacons].filter(newBeacon => newBeacon.id !== el.id);
                 setBeacons([...newBeacons]);
             }
         });
     }, 500);
-    return () => clearInterval(interval);
+    return (beacons) => clearInterval(interval);
 }, [])
 
 
@@ -139,6 +140,9 @@ function PlayMap(props) {
         />
         ))}
       </OsmMap>
+      <div className="footer">
+        <p>Beacons left: {beacons.length} / test: {test}</p>
+      </div>
     </div>
   );
 }

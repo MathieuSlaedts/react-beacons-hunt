@@ -189,3 +189,16 @@ main:not(.no-pad) {
 
   }
 }
+
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0,0,0,0.7);
+  color: white;
+  text-align: center;
+  padding: 1rem;
+  width: 100%;
+  z-index: 9999;
+}
