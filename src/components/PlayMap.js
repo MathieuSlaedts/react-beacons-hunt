@@ -99,17 +99,13 @@ function PlayMap(props) {
   // Check distance every .5sec
  useEffect(() => {
     setWatchD(watchD => watchD+1);
-    /* const interval = setInterval(() => {
-        beacons.forEach((el,index) => {
-            const dist = getDistance(geoloc.lat, geoloc.lng, el.lat, el.lng, 'K');
-            console.log(dist);
-            if(dist < 0.035) {
-                const newBeacons = [...beacons].filter(newBeacon => newBeacon.id !== el.id);
-                setBeacons([...newBeacons]);
-            }
-        });
-    }, 1000);
-    return () => clearInterval(interval); */
+    beacons.forEach((el,index) => {
+        const dist = getDistance(geoloc.lat, geoloc.lng, el.lat, el.lng, 'K');
+        if(dist < 0.035) {
+            const newBeacons = [...beacons].filter(newBeacon => newBeacon.id !== el.id);
+            setBeacons([...newBeacons]);
+        }
+    });
 // eslint-disable-next-line
 }, [geoloc])
 
