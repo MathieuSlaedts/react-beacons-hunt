@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { renderToStaticMarkup } from "react-dom/server";
 import { divIcon } from "leaflet";
-import { Map as OsmMap, Marker, Popup, Circle, TileLayer } from 'react-leaflet';
+import { Map as OsmMap, Marker, /* Popup, Circle, */ TileLayer } from 'react-leaflet';
 import uid from 'uid';
 
 function PlayMap(props) {
 
   // From https://www.geodatasource.com/developers/javascript
   function getDistance(lat1, lon1, lat2, lon2, unit) {
-    if ((lat1 == lat2) && (lon1 == lon2)) {
+    if ((lat1 === lat2) && (lon1 === lon2)) {
       return 0;
     }
     else {
@@ -23,39 +23,69 @@ function PlayMap(props) {
       dist = Math.acos(dist);
       dist = dist * 180/Math.PI;
       dist = dist * 60 * 1.1515;
-      if (unit=="K") { dist = dist * 1.609344 }
-      if (unit=="N") { dist = dist * 0.8684 }
+      if (unit==="K") { dist = dist * 1.609344 }
+      if (unit==="N") { dist = dist * 0.8684 }
       return dist;
     }
-  }
-  
-  function deg2rad(deg) {
-    return deg * (Math.PI/180)
   }
 
   // Customize Icon Marker
   const customMarkerUserPos = divIcon({
     html: renderToStaticMarkup(<span className="custom-marker custom-marker-user-pos" />)
   });
-  const customMarkerBeacon = divIcon({
-    html: renderToStaticMarkup(<span className="custom-marker custom-marker-beacon" />)
-  });
+  const customMarkerBeacon = (id) => { 
+      return divIcon({ html: renderToStaticMarkup(<span id={id} className="custom-marker custom-marker-beacon" />) })
+};
 
-  // Hanle click on map
+  // Hanle click on Map
   const handleClickOnMap = (ev) => {
     console.log("click on map", ev.latlng);
     const { lat, lng } = ev.latlng;
     setBeacons(prevBeacons => [...prevBeacons, {id: uid(), lat: lat, lng: lng}]);
   };
 
-  // Hanle click on map
-  // Todo: remove the beacon if create trail
+  // Hanle click on Beacon / Marker
   const handleClickOnBeacon = (ev) => {
-    console.log("click on beacon", ev);
+    const beaconId = ev.originalEvent.srcElement.id;
+    addBeaconToParticipation(beaconId);
+    deleteBeacon(beaconId);
   };
 
-  // State - geolocation
-  const [watchD, setWatchD] = useState(1);
+  const addBeaconToParticipation = (id) => {
+    let catchedBeacon = [...beacons].filter(newBeacon => newBeacon.id === id).shift();
+    console.log("b: ", catchedBeacon);
+    let newP = {...participation}
+    newP.beacons.push({...catchedBeacon, time: Date.now()});
+    setParticipation(newP);
+  };
+
+  const setEndTimeParticipation = () => {
+    let newP = {...participation}
+    newP.end = Date.now();
+    setParticipation(newP);
+  };
+
+  const deleteBeacon = (id) => {
+    const newBeacons = [...beacons].filter(newBeacon => newBeacon.id !== id);
+    setBeacons([...newBeacons]);
+  };
+
+  const handleNoBeacon = () => {
+    if( beacons.length === 0 ) {
+        setEndTimeParticipation();
+        console.log("WIN");
+    }
+  };
+
+  // States
+  const [participation, setParticipation] = useState({
+        id: uid(),
+        trailId: "trail ID",
+        userId: "user ID",
+        start: Date.now(),
+        beacons: [],
+        end: ''
+  });
   const [geoloc, setGeoloc] = useState({ lat: 50.824257682060185, lng: 4.381259679794312 });
   const [beacons, setBeacons] = useState([
         {
@@ -80,7 +110,8 @@ function PlayMap(props) {
         }
     ]);
 
-  // Set and Update Geolocation
+// Set and Update Geolocation
+// Effect happens on Mount
  useEffect(() => {
       function handleSuccess(pos) {
         var newGeoloc = pos.coords;
@@ -96,24 +127,26 @@ function PlayMap(props) {
 
 
 
-    // Check distance every .5sec
+  // Check if there is beacons
+  // Effect happens when beacons is updated
+  useEffect(() => {
+    handleNoBeacon();
+  // eslint-disable-next-line
+  }, [beacons])
+
+
+
+    // Check distance between user and beacons
+    // Effetc happens when geoloc is updates
     useEffect(() => {
-        setWatchD(watchD => watchD+1);
-        if(beacons.length === 0) {
-            alert("win");
-            return;
-        }
         beacons.forEach((el,index) => {
             const dist = getDistance(geoloc.lat, geoloc.lng, el.lat, el.lng, 'K');
-            if(dist < 0.035) {
-                const newBeacons = [...beacons].filter(newBeacon => newBeacon.id !== el.id);
-                setBeacons([...newBeacons]);
-            }
+            if(dist < 0.035) { deleteBeacon(el.id); }
         });
     // eslint-disable-next-line
     }, [geoloc])
 
-
+    console.log(participation);
   return (
     <div className="map-container">
       <OsmMap
@@ -135,16 +168,14 @@ function PlayMap(props) {
         {beacons.map((el, index) => (
           <Marker
           key={el.id}
-          kid={el.id}
           position={[el.lat, el.lng]}
-          icon={customMarkerBeacon}
+          icon={customMarkerBeacon(el.id)}
           onclick={handleClickOnBeacon}
         />
         ))}
       </OsmMap>
       <div className="footer">
           <p>Geoloc: {geoloc.lat} / {geoloc.lng}</p>
-          <p>watch D: {watchD}</p>
       </div>
     </div>
   );

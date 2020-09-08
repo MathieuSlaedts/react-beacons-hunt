@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { renderToStaticMarkup } from "react-dom/server";
 import { divIcon } from "leaflet";
-import { Map as OsmMap, Marker, Popup, Circle, TileLayer } from 'react-leaflet';
+import { Map as OsmMap, Marker, /* Popup, Circle, */ TileLayer } from 'react-leaflet';
 
 function Map(props) {
 
   // From https://www.geodatasource.com/developers/javascript
   function getDistance(lat1, lon1, lat2, lon2, unit) {
-    if ((lat1 == lat2) && (lon1 == lon2)) {
+    if ((lat1 === lat2) && (lon1 === lon2)) {
       return 0;
     }
     else {
@@ -22,14 +22,10 @@ function Map(props) {
       dist = Math.acos(dist);
       dist = dist * 180/Math.PI;
       dist = dist * 60 * 1.1515;
-      if (unit=="K") { dist = dist * 1.609344 }
-      if (unit=="N") { dist = dist * 0.8684 }
+      if (unit==="K") { dist = dist * 1.609344 }
+      if (unit==="N") { dist = dist * 0.8684 }
       return dist;
     }
-  }
-  
-  function deg2rad(deg) {
-    return deg * (Math.PI/180)
   }
 
   // Customize Icon Marker
@@ -74,6 +70,7 @@ function Map(props) {
       navigator.geolocation.getCurrentPosition(handleSuccess, handleError);
       const watchId = navigator.geolocation.watchPosition(handleSuccess, handleError);
     return () => navigator.geolocation.clearWatch(watchId);
+  // eslint-disable-next-line
   }, [])
 
   return (

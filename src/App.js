@@ -16,8 +16,8 @@ function App() {
       <div className='temp-nav'><div className="container">
         {/* <Link to="/">Identification</Link>
         <Link to="/registration">Inscription</Link>
-        <Link to="/trails">Parcours</Link>
         <Link to="/stats">Stats</Link> */}
+        <Link to="/trails">Parcours</Link>
         <Link to="/new-trail">NewTrail</Link>
         <Link to="/play-trail">PlayTrail</Link></div></div>
         <Switch>
