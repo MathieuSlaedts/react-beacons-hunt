@@ -62,6 +62,7 @@ function Stats(props) {
     }
 
     const fetchQuests = async () => {
+        console.log("in fetch");
         const url = rUrl + 'quests';
         try {
             const resp = await Axios.get( url );
@@ -80,6 +81,7 @@ function Stats(props) {
     // -----------------------
 
     useEffect( () => {
+        console.log("in effect");
         ( async () => {
             let newQuests = await fetchQuests();
             arangeQuests(newQuests);
@@ -87,11 +89,10 @@ function Stats(props) {
     // eslint-disable-next-line
     }, []);
 
+    // -----------------------
+    // RENDER
+    // -----------------------
     
-
-    // console.log(trail);
-    //console.log(trail.trail_id, quests);
-    console.log("stats:", quests);
     return (
       <>
       <Header title={`Statistiques`} />

@@ -97,10 +97,10 @@ function Map(props) {
     setQuest(newQuest);
   };
 
-  const handleNoBeacon = () => {
-    if( beacons.length === 0 ) {
+  const handleNoBeacon = async () => {
+    if( userType === "player" && beacons.length === 0 ) {
       console.log("WIN", quest);
-      postQuest(quest);
+      await postQuest(quest);
       history.push({
         pathname: "/Stats",
         state: {
@@ -139,7 +139,7 @@ function Map(props) {
       } catch (err) { console.error(err); }
   };
 
-  const handleTrailValidation = (ev) => {
+  const handleTrailValidation = async (ev) => {
       ev.preventDefault();
       console.log("add new trail");
       const newtrail = {
@@ -147,7 +147,7 @@ function Map(props) {
           name: newTrailNameFld.current.value,
           beacons: beacons
       };
-      postTrail(newtrail);
+      await postTrail(newtrail);
       history.push("/trails");
   };
 
@@ -160,6 +160,11 @@ function Map(props) {
     setBeacons([...newBeacons]);
   };
 
+  const captureBeacon = (beaconId) => {
+    addBeaconToQuest(beaconId);
+    deleteBeacon(beaconId);
+  };
+
   // -----------------------
   // FOR TEST
   // -----------------------
@@ -167,8 +172,7 @@ function Map(props) {
   // Hanle click on Beacon / Marker
   const handleClickOnBeacon = (ev) => {
     const beaconId = ev.originalEvent.srcElement.id;
-    addBeaconToQuest(beaconId);
-    deleteBeacon(beaconId);
+    captureBeacon(beaconId);
   };
 
   // -----------------------
@@ -230,17 +234,16 @@ function Map(props) {
         if( userType === "player") {
         beacons.forEach((el,index) => {
             const dist = getDistance(geoloc.lat, geoloc.lng, el.lat, el.lng, 'K');
-            if(dist < 0.035) { deleteBeacon(el.beacon_id); }
+            if(dist < 0.035) { captureBeacon(el.beacon_id); }
         });
     }
     // eslint-disable-next-line
     }, [geoloc])
 
+    // -----------------------
+    // RENDER
+    // -----------------------
 
-//console.log(quest);
-//console.log(initialBeacons);
-//console.log(beacons);
-console.log(initialTrail);
   return (
     <div className="map-container">
       <OsmMap
