@@ -71,40 +71,40 @@ main:not(.no-pad) {
 }
 
 .trail {
-  display: grid;
-  grid-template-columns: auto min-content min-content;
-  grid-gap: .5rem;
   border: 1px solid #dbdbdb;
+  border-radius: 4px;
   padding: .8rem;
 
   &:hover {
-    background-color: #eee;
   }
 }
 
-.trail:first-child {
-  border-radius: 4px 4px 0 0;
-}
-
-.trail:last-child {
-  border-radius: 0 0 4px 4px;
-}
-
 .trail p {
-  padding: calc(0.5em - 1px) 1em;
-  border: 1px solid transparent;
-  font-size: 1rem;
-  height: 2.5em;
+  padding: 1rem 0;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #dbdbdb;
+  font-weight: bold;
 
   span {
     margin-left: .6rem;
     position: relative;
     top: -2px;
+    font-weight: normal;
   }
 }
 
+.trail div {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: .5rem;
+}
+
+.trail .button {
+  background-color: #eee;
+}
+
 .trail + .trail {
-  border-top: 0;
+  margin-top: 1rem;
 }
 
 
@@ -199,7 +199,13 @@ main:not(.no-pad) {
   background-color: rgba(0,0,0,0.7);
   color: white;
   text-align: center;
-  padding: 1rem;
+  padding: 2rem;
   width: 100%;
   z-index: 9999;
+
+  form {
+    display: grid;
+    grid-template-columns: auto min-content;
+    grid-gap: 1rem;
+  }
 }

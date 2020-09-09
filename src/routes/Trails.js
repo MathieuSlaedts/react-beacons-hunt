@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Axios from 'axios';
 import uid from 'uid';
+import { Link } from "react-router-dom";
 import Header from '../components/Header.js'
 
 function Trails() {
@@ -30,8 +31,12 @@ function Trails() {
         const newtrail = {
             trail_id: uid(),
             name: "My new Trail",
-            becoins: [
-                { becoin_id: uid(), lat: 50.8243, lng: 4.38075 }
+            beacons: [
+                { beacon_id: uid(), lat: 50.8243, lng: 4.38075 },
+                { beacon_id: uid(), lat: 50.82476598565123, lng: 4.380776882171632 },
+                { beacon_id: uid(), lat: 50.82391880992506, lng: 4.380873441696168 },
+                { beacon_id: uid(), lat: 50.82384425772526, lng: 4.382236003875733 },
+                { beacon_id: uid(), lat: 50.82418313040149, lng: 4.381710290908814 }
             ]
         };
         postTrail(newtrail);
@@ -52,18 +57,37 @@ console.log(trails);
       <Header title={`Parcours`} />
       <main>
         <div className="container">
-            <button
+            {/* <button
                 onClick={handleAddNewTrail}
                 className="add-trail-btn button is-link"
-            >Créer un nouveau parcours</button>
+            >Créer un nouveau parcours</button> */}
+                    <Link 
+                        to={{
+                            pathname: "/play-trail",
+                            state: {
+                                userType: "builder"
+                            }
+                        }}
+                        className="add-trail-btn button is-link">Créer un nouveau parcours</Link>
 
             <ul className="trails">
 
                 {trails.map((el, index) => (
                 <li key={el.trail_id} className="trail">
                     <p>{el.name} <span className="tag is-warning">Inactif</span></p>
-                    <button className="button">Jouer</button>
+                    <div>
+                    <button className="button" disabled>Editer</button>
+                    <Link 
+                        to={{
+                            pathname: "/play-trail",
+                            state: {
+                                trail: el,
+                                userType: "player"
+                            }
+                        }} 
+                        className="button">Jouer</Link>
                     <button className="button">Stats</button>
+                    </div>
                 </li>
                 ))}
             </ul>
