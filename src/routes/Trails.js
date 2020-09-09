@@ -1,15 +1,41 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Axios from 'axios';
 import uid from 'uid';
 import { Link } from "react-router-dom";
 import Header from '../components/Header.js'
+import Contexts from '../contexts/Contexts.js'
+import { useHistory } from "react-router-dom";
 
 function Trails() {
 
-    const [trails, setTrails] = useState([]);
+    // -----------------------
+    // REACT ROUTER HISTORY
+    // -----------------------
+    
+    const history = useHistory();
 
-    const fetchDatas = async () => {
-        const url = 'http://localhost:1337/trails';
+    // -----------------------
+    // CONTEXTS
+    // -----------------------
+  
+    const { myContext, setMyContext } = useContext(Contexts);
+    let user = null;
+    let role = null;
+    if( myContext.user.name === undefined || myContext.user.role === undefined ) {
+        window.location.href = '/';
+    } else {
+        user = myContext.user.name;
+        role = myContext.user.role;
+    }
+    
+    const rUrl = (myContext.rUrl[myContext.env]);
+
+    // -----------------------
+    // METHODS
+    // -----------------------
+
+    const fetchTrails = async () => {
+        const url = rUrl + 'trails';
         try {
             const resp = await Axios.get( url );
             return resp.data;
@@ -18,7 +44,7 @@ function Trails() {
 
     const postTrail = async (trail) => {
         console.log("post trail");
-        const url = 'http://localhost:1337/trails';
+        const url = rUrl + 'trails';
         try {
             const resp = await Axios.post( url, trail );
             //return resp.data;
@@ -42,57 +68,76 @@ function Trails() {
         postTrail(newtrail);
     };
 
+    const handleChangeRole = async (ev) => {
+        ev.preventDefault();
+    
+        let newContext = {...myContext};
+          newContext.user = {
+            name: user,
+            role:  role === "player" ? "builder" : "player"
+          }
+        setMyContext(newContext);
+    };
+
+    // -----------------------
+    // STATES
+    // -----------------------
+
+    const [trails, setTrails] = useState([]);
+
+    // -----------------------
+    // EFFETCS
+    // -----------------------
+
     useEffect( () => {
         ( async () => {
-            const newTrails = await fetchDatas();
+            const newTrails = await fetchTrails();
             setTrails(newTrails);
         })();
     // eslint-disable-next-line
     }, []);
 
 
-console.log(trails);
-  return (
-      <>
-      <Header title={`Parcours`} />
-      <main>
-        <div className="container">
-            {/* <button
-                onClick={handleAddNewTrail}
-                className="add-trail-btn button is-link"
-            >Créer un nouveau parcours</button> */}
+    console.log(myContext.user, user, role);
+    return (
+        <>
+        <Header title={`Parcours`} />
+            <main className={role !== null && role !== undefined ? role : undefined}>
+                <div className="container">
+                    
+                    { role === "builder" &&
                     <Link 
-                        to={{
-                            pathname: "/play-trail",
-                            state: {
-                                userType: "builder"
-                            }
-                        }}
+                        to={{ pathname: "trail" }}
                         className="add-trail-btn button is-link">Créer un nouveau parcours</Link>
-
-            <ul className="trails">
-
-                {trails.map((el, index) => (
-                <li key={el.trail_id} className="trail">
-                    <p>{el.name} <span className="tag is-warning">Inactif</span></p>
-                    <div>
-                    <button className="button" disabled>Editer</button>
-                    <Link 
-                        to={{
-                            pathname: "/play-trail",
-                            state: {
-                                trail: el,
-                                userType: "player"
-                            }
-                        }} 
-                        className="button">Jouer</Link>
-                    <button className="button">Stats</button>
-                    </div>
-                </li>
-                ))}
-            </ul>
-        </div>
-      </main>
+                    }
+                    
+                    <ul className="trails">
+                        
+                        {trails.map((el, index) => (
+                            <li key={el.trail_id} className="trail">
+                                <p>{el.name}{ role === "builder" && <span className="tag is-warning">Inactif</span>}</p>
+                                <div>
+                                    
+                                    { role === "builder" &&
+                                        <button className="button" disabled>Editer</button>
+                                    }
+                                    
+                                    { role === "player" &&
+                                    <Link
+                                    to={{ pathname: "/trail", state: { trail: el } }}
+                                    className="button">Jouer</Link>
+                                    }
+                                    
+                                    <Link
+                                    to={{ pathname: "/Stats", state: { trail: el } }}
+                                    className="button">Stats</Link>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                    <button className="button is-link" onClick={handleChangeRole}>Changer de role</button>
+                </div>
+            </main>
       </>
   );
 }
