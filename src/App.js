@@ -17,28 +17,18 @@ function App() {
     <Contexts.Provider value={{ myContext, setMyContext }}>
     <Router>
       <div className="App">
-
-      {/* <div className='temp-nav'><div className="container">
-        <Link to="/">Identification</Link>
-        <Link to="/registration">Inscription</Link>
-        <Link to="/trails">Parcours</Link>
-        <Link to="/trail">Trail</Link></div></div> */}
         <Switch>
-          <Route exact path="/" component={Login}>
+          <Route exact path="/">
             <Login key={uid()} />
           </Route>
-          <Route exact path="/registration" component={Registration}>
+          <Route exact path="/registration">
             <Registration key={uid()} />
           </Route>
-          <Route exact path="/trails">
-            <Trails key={uid()} />
-          </Route>
-          <Route exact path="/stats" component={Stats}>
-            <Stats key={uid()} />
-          </Route>
-          <Route exact path="/trail" component={Trail}>
-            <Trail key={uid()} />
-          </Route>
+          {/* <Route exact path="/trails"><Trails key={uid()} /></Route> */}
+          {/* <Route exact path="/stats" component={Stats} key={uid()} /> */}
+          <Route exact path="/trails" render={(props) => <Trails {...props} key={uid()} />} />
+          <Route exact path="/stats" render={(props) => <Stats {...props} key={uid()} />} />
+          <Route exact path="/trail" component={Trail} key={uid()} />
         </Switch>
     </div>
     </Router>

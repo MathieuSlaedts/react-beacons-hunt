@@ -52,6 +52,15 @@ function Stats(props) {
           return quest;
       };
 
+    const arangeQuests = (newQuests) => {
+        if( newQuests !== undefined ) {
+            newQuests = newQuests.filter(el => el.trail_id === trail.trail_id);
+            newQuests = newQuests.map(el => questDuration(el));
+            newQuests = newQuests.sort((a, b) => a.duration - b.duration);
+            setQuests(newQuests);
+        }
+    }
+
     const fetchQuests = async () => {
         const url = rUrl + 'quests';
         try {
@@ -73,13 +82,12 @@ function Stats(props) {
     useEffect( () => {
         ( async () => {
             let newQuests = await fetchQuests();
-            newQuests = newQuests.filter(el => el.trail_id === trail.trail_id);
-            newQuests = newQuests.map(el => questDuration(el));
-            newQuests = newQuests.sort((a, b) => a.duration - b.duration);
-            setQuests(newQuests);
+            arangeQuests(newQuests);
         })();
     // eslint-disable-next-line
     }, []);
+
+    
 
     // console.log(trail);
     //console.log(trail.trail_id, quests);

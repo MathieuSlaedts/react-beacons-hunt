@@ -43,7 +43,6 @@ function LoginForm() {
   // RENDER
   // -----------------------
 
-  console.log(myContext);
   return (
           <form onSubmit={handleSubmit}>
             <div className="field">

@@ -29,7 +29,6 @@ function Trail(props) {
   let trail = undefined;
   if( role === "player") trail = props.location.state.trail;
 
-  // console.log(props.location.state);
   return (
       <>
       <Header title={`Parcours`} />
