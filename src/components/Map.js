@@ -242,7 +242,7 @@ function Map(props) {
       // Capture beacon
       beacons.forEach((el,index) => {
         const dist = getDistance(geoloc.lat, geoloc.lng, el.lat, el.lng, 'K');
-        if(dist < 0.035) { captureBeacon(el.beacon_id); }
+        if(dist < 0.010) { captureBeacon(el.beacon_id); }
       });
     }
   // eslint-disable-next-line
