@@ -18,17 +18,11 @@ function App() {
     <Router>
       <div className="App">
         <Switch>
-          <Route exact path="/">
-            <Login key={uid()} />
-          </Route>
-          <Route exact path="/registration">
-            <Registration key={uid()} />
-          </Route>
-          {/* <Route exact path="/trails"><Trails key={uid()} /></Route> */}
-          {/* <Route exact path="/stats" component={Stats} key={uid()} /> */}
+          <Route exact path="/" component={Login} />
+          <Route exact path="/registration" component={Registration} />
           <Route exact path="/trails" render={(props) => <Trails {...props} key={uid()} />} />
           <Route exact path="/stats" render={(props) => <Stats {...props} key={uid()} />} />
-          <Route exact path="/trail" component={Trail} key={uid()} />
+          <Route exact path="/trail" component={Trail} />
         </Switch>
     </div>
     </Router>

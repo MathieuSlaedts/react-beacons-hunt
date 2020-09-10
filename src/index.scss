@@ -66,21 +66,14 @@ main:not(.no-pad) {
 
 /* List of Trails */
 
-.add-trail-btn {
-  margin-bottom: 1rem;
-}
-
 .trails {
-  margin-bottom: 2rem;
+  margin: 1rem 0;
 }
 
 .trail {
   border: 1px solid #dbdbdb;
   border-radius: 4px;
   padding: .8rem;
-
-  &:hover {
-  }
 }
 
 .trail p {

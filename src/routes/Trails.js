@@ -115,7 +115,7 @@ function Trails() {
                         
                         {trails.map((el, index) => (
                             <li key={el.trail_id} className="trail">
-                                <p>{el.name}{ role === "builder" && <span className="tag is-warning">Inactif</span>}</p>
+                                <p>{el.name}{/*role === "builder" && <span className="tag is-warning">Inactif</span>*/}</p>
                                 <div>
                                     
                                     { role === "builder" &&

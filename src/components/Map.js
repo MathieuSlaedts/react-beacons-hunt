@@ -25,40 +25,41 @@ function Map(props) {
     
   const rUrl = (myContext.rUrl[myContext.env]);
 
-    // -----------------------
-    // PROPS
-    // -----------------------
+  // -----------------------
+  // PROPS
+  // -----------------------
 
-    const userType = role;
-    const initialTrail = props.trail;
-    const initialBeacons = userType === "player" ? initialTrail.beacons : [];
+  // userType is useless & should be replaced by role a next refactoring
+  const userType = role;
+  const initialTrail = props.trail;
+  const initialBeacons = userType === "player" ? initialTrail.beacons : [];
 
-    // -----------------------
-    // REFS
-    // -----------------------
+  // -----------------------
+  // REFS
+  // -----------------------
     
-    const newTrailNameFld = useRef();
+  const newTrailNameFld = useRef();
 
-    // -----------------------
-    // REACT ROUTER HISTORY
-    // -----------------------
+  // -----------------------
+  // REACT ROUTER HISTORY
+  // -----------------------
     
-    const history = useHistory();
+  const history = useHistory();
 
-    // -----------------------
-    // CUSTOMIZE ICON MARKERs
-    // -----------------------
+  // -----------------------
+  // CUSTOMIZE ICON MARKERs
+  // -----------------------
     
-    const customMarkerUserPos = divIcon({
-      html: renderToStaticMarkup(<span className="custom-marker custom-marker-user-pos" />)
-    });
-    const customMarkerBeacon = (id) => {
-      return divIcon({ html: renderToStaticMarkup(<span id={id} className="custom-marker custom-marker-beacon" />) })
-    };
+  const customMarkerUserPos = divIcon({
+    html: renderToStaticMarkup(<span className="custom-marker custom-marker-user-pos" />)
+  });
+  const customMarkerBeacon = (id) => {
+    return divIcon({ html: renderToStaticMarkup(<span id={id} className="custom-marker custom-marker-beacon" />) })
+  };
 
-    // -----------------------
-    // FOR PLAYER
-    // -----------------------
+  // -----------------------
+  // FOR PLAYER
+  // -----------------------
 
   // From https://www.geodatasource.com/developers/javascript
   function getDistance(lat1, lon1, lat2, lon2, unit) {
@@ -125,7 +126,6 @@ function Map(props) {
 
   // Hanle click on Map
   const handleClickOnMap = (ev) => {
-    //console.log("click on map", ev.latlng);
     const { lat, lng } = ev.latlng;
     setBeacons(prevBeacons => [...prevBeacons, {beacon_id: uid(), lat: lat, lng: lng}]);
   };
@@ -169,7 +169,6 @@ function Map(props) {
   // FOR TEST
   // -----------------------
 
-  // Hanle click on Beacon / Marker
   const handleClickOnBeacon = (ev) => {
     const beaconId = ev.originalEvent.srcElement.id;
     captureBeacon(beaconId);
@@ -195,8 +194,8 @@ function Map(props) {
   // -----------------------
 
 
-// Effect happens on Mount
- useEffect(() => {
+  // Effect happens on Mount
+  useEffect(() => {
 
       // Set Quest Start time
       setStartTimeQuest();
@@ -214,35 +213,30 @@ function Map(props) {
     return () => navigator.geolocation.clearWatch(watchId);
   }, [])
 
-
-
-  // Check if there is beacons
   // Effect happens when beacons is updated
   useEffect(() => {
     if( userType === "player") {
+        // Check if there are remaining beacons
         handleNoBeacon();
     }
   // eslint-disable-next-line
   }, [beacons])
 
-
-
-    // Check distance between user and beacons
-    // Effetc happens when geoloc is updates
-    
-    useEffect(() => {
-        if( userType === "player") {
-        beacons.forEach((el,index) => {
-            const dist = getDistance(geoloc.lat, geoloc.lng, el.lat, el.lng, 'K');
-            if(dist < 0.035) { captureBeacon(el.beacon_id); }
-        });
+  // Effect happens when geoloc is updates
+  useEffect(() => {
+    if( userType === "player") {
+      // Capture beacon
+      beacons.forEach((el,index) => {
+        const dist = getDistance(geoloc.lat, geoloc.lng, el.lat, el.lng, 'K');
+        if(dist < 0.035) { captureBeacon(el.beacon_id); }
+      });
     }
-    // eslint-disable-next-line
-    }, [geoloc])
+  // eslint-disable-next-line
+  }, [geoloc])
 
-    // -----------------------
-    // RENDER
-    // -----------------------
+  // -----------------------
+  // RENDER
+  // -----------------------
 
   return (
     <div className="map-container">

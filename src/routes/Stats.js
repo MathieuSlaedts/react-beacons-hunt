@@ -80,6 +80,7 @@ function Stats(props) {
     // EFFETCS
     // -----------------------
 
+    // Effect happens on Mount
     useEffect( () => {
         console.log("in effect");
         ( async () => {
@@ -101,6 +102,8 @@ function Stats(props) {
 
         <h2>Parcours: {trail.name}</h2>
 
+            {quests.length === 0 && <p>No result</p>}
+            {quests.length > 0 &&
             <table className="stats">
                 <thead>
                     <tr>
@@ -123,6 +126,7 @@ function Stats(props) {
                     ))}
                 </tbody>
             </table>
+            }
 
             <Link
             to={{ pathname: "/trails" }}
