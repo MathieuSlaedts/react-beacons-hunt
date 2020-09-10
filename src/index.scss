@@ -200,11 +200,54 @@ main:not(.no-pad) {
   text-align: center;
   padding: 2rem;
   width: 100%;
-  z-index: 9999;
+  z-index: 9998;
 
   form {
     display: grid;
     grid-template-columns: auto min-content;
     grid-gap: 1rem;
+  }
+}
+
+// Camera
+
+.take-picture {
+  background-color: white;
+  position: fixed;
+  top: 0; left: 0;
+  height: 100vh;
+  width: 100vw;
+  z-index: 9999;
+  
+  div.image-preview,
+  div.image-preview img,
+  div.react-html5-camera-photo  {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    width: 100%;
+  }
+
+  .image-preview img {
+    object-fit: cover;
+  }
+
+  .camera-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem;
+    background: rgba(0,0,0,0.5);
+    text-align: center;
+    z-index: 1;
+
+    button {
+      margin: 0 .25rem;
+    }
+  }
+
+  div.react-html5-camera-photo > video {
+    width: 100%;
   }
 }

@@ -5,7 +5,8 @@ import { Map as OsmMap, Marker, /* Popup, Circle, */ TileLayer } from 'react-lea
 import uid from 'uid';
 import Axios from 'axios';
 import { useHistory } from "react-router-dom";
-import Contexts from '../contexts/Contexts.js'
+import Contexts from '../contexts/Contexts.js';
+import TakePicture from '../components/camera/TakePicture.js';
 
 function Map(props) {
 
@@ -31,8 +32,12 @@ function Map(props) {
 
   // userType is useless & should be replaced by role a next refactoring
   const userType = role;
-  const initialTrail = props.trail;
-  const initialBeacons = userType === "player" ? initialTrail.beacons : [];
+  let initialTrail = "";
+  let initialBeacons = [];
+  if(role === "player") {
+    initialTrail = props.trail;
+    initialBeacons = initialTrail.beacons;
+  }
 
   // -----------------------
   // REFS
@@ -58,7 +63,7 @@ function Map(props) {
   };
 
   // -----------------------
-  // FOR PLAYER
+  // METHODS
   // -----------------------
 
   // From https://www.geodatasource.com/developers/javascript
@@ -84,40 +89,20 @@ function Map(props) {
     }
   }
 
-  const addBeaconToQuest = (id) => {
-    let catchedBeacon = [...beacons].filter(newBeacon => newBeacon.beacon_id === id).shift();
-    let newQuest = {...quest}
-    newQuest.beacons.push({...catchedBeacon, time: Date.now()});
-    setQuest(newQuest);
+  // Player Win
+  const playerWin = async () => {
+    await postQuest(quest);
+    history.push({
+      pathname: "/Stats",
+      state: { trail: initialTrail, }
+    });
   };
 
-  const setStartTimeQuest = () => {
-    let newQuest = {...quest}
-    newQuest.start = Date.now();
-    if(userType === "player") newQuest.trail_id = initialTrail.trail_id;
-    setQuest(newQuest);
-  };
-
-  const handleNoBeacon = async () => {
-    if( userType === "player" && beacons.length === 0 ) {
-      console.log("WIN", quest);
-      await postQuest(quest);
-      history.push({
-        pathname: "/Stats",
-        state: {
-            trail: initialTrail,
-        }
-      });
-    }
-  };
-
+  // Axios request
+  // -> Add a Quest in the DB
   const postQuest = async (quest) => {
-      // console.log(quest);
-      const url = rUrl + 'quests';
-      try {
-          const resp = await Axios.post( url, quest );
-          // console.log(resp.data);
-      } catch (err) { console.error(err); }
+    try { const resp = await Axios.post( rUrl + 'quests', quest ); }
+    catch (err) { console.error(err); }
   };
 
   // -----------------------
@@ -125,18 +110,17 @@ function Map(props) {
   // -----------------------
 
   // Hanle click on Map
+  // -> Update Beacons in state: add a new beacon
   const handleClickOnMap = (ev) => {
     const { lat, lng } = ev.latlng;
     setBeacons(prevBeacons => [...prevBeacons, {beacon_id: uid(), lat: lat, lng: lng}]);
   };
 
+  // Axios request
+  // -> Add a Trail in the DB
   const postTrail = async (trail) => {
-      console.log("post trail");
-      const url = rUrl + 'trails';
-      try {
-          const resp = await Axios.post( url, trail );
-          //return resp.data;
-      } catch (err) { console.error(err); }
+      try { const resp = await Axios.post( rUrl + 'trails', trail ); }
+      catch (err) { console.error(err); }
   };
 
   const handleTrailValidation = async (ev) => {
@@ -155,14 +139,41 @@ function Map(props) {
   // FOR PLAYER & BUILDER
   // -----------------------
 
-  const deleteBeacon = (id) => {
-    const newBeacons = [...beacons].filter(newBeacon => newBeacon.beacon_id !== id);
-    setBeacons([...newBeacons]);
+  const captureBeacon = (beaconId) => {
+    createNewBeacon(beaconId);
+    updateRemainingBeacons(beaconId);
   };
 
-  const captureBeacon = (beaconId) => {
-    addBeaconToQuest(beaconId);
-    deleteBeacon(beaconId);
+  const takePicture = () => {
+    swichShowCamera();
+  }
+
+  const pictureTaken = (dataUri) => {
+    console.log(win);
+    swichShowCamera();
+    // let catchedBeacon = {...newBeacon, picture: dataUri}
+    const catchedBeacon = {...newBeacon};
+    let newQuest = {...quest}
+    newQuest.beacons.push(catchedBeacon);
+    setQuest(newQuest);
+    if(win === true ) { 
+      
+      playerWin();
+    }
+  }
+
+  // Update the state - quest -> Add captured beacon
+  const createNewBeacon = (beaconId) => {
+    let catchedBeacon = [...beacons].filter(newBeacon => newBeacon.beacon_id === beaconId).shift();
+    catchedBeacon = {...catchedBeacon, time:Date.now() };
+    setNewBeacon(catchedBeacon); console.log("new Beacon: ", catchedBeacon);
+    takePicture();
+  };
+
+  // Update state - beacons -> Delete captured beacon
+  const updateRemainingBeacons = (id) => {
+    const newBeacons = [...beacons].filter(newBeacon => newBeacon.beacon_id !== id);
+    setBeacons([...newBeacons]);
   };
 
   // -----------------------
@@ -174,13 +185,17 @@ function Map(props) {
     captureBeacon(beaconId);
   };
 
+  const swichShowCamera = () => {
+    setShowCamera(!showCamera);
+  };
+
   // -----------------------
   // STATES
   // -----------------------
 
   const [quest, setQuest] = useState({
         quest_id: uid(),
-        trail_id: "",
+        trail_id: initialTrail.trail_id,
         player_name: user,
         player_id: "fakeid-"+uid(),
         start: Date.now(),
@@ -188,6 +203,9 @@ function Map(props) {
   });
   const [geoloc, setGeoloc] = useState({ lat: 50.824257682060185, lng: 4.381259679794312 });
   const [beacons, setBeacons] = useState(initialBeacons);
+  const [newBeacon, setNewBeacon] = useState({});
+  const [showCamera, setShowCamera] = useState(false);
+  const [win, setWin] = useState(false);
 
   // -----------------------
   // EFFECTS
@@ -196,9 +214,6 @@ function Map(props) {
 
   // Effect happens on Mount
   useEffect(() => {
-
-      // Set Quest Start time
-      setStartTimeQuest();
 
       // Set and Update Geolocation
       function handleSuccess(pos) {
@@ -215,9 +230,8 @@ function Map(props) {
 
   // Effect happens when beacons is updated
   useEffect(() => {
-    if( userType === "player") {
-        // Check if there are remaining beacons
-        handleNoBeacon();
+    if( userType === "player" && beacons.length === 0 ) {
+        setWin(true);
     }
   // eslint-disable-next-line
   }, [beacons])
@@ -276,6 +290,7 @@ function Map(props) {
             </form>
         }
       </div>
+      { showCamera === true && <TakePicture pictureTaken={pictureTaken} /> }
     </div>
   );
 }

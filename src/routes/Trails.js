@@ -96,9 +96,7 @@ function Trails() {
         })();
     // eslint-disable-next-line
     }, []);
-
-
-    console.log(myContext.user, user, role);
+    
     return (
         <>
         <Header title={`Parcours`} />
