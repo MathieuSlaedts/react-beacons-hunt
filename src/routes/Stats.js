@@ -2,38 +2,39 @@ import React, { useState, useEffect, useContext } from 'react';
 import Axios from 'axios';
 import Header from '../components/Header.js';
 import { Link } from "react-router-dom";
-import Contexts from '../contexts/Contexts.js';
-import { useHistory } from "react-router-dom";
+import Context from '../contexts/Context.js';
+// import useUserHook from '../hooks/useUserHook.js';
 
 function Stats(props) {
 
     // -----------------------
-    // REACT ROUTER HISTORY
+    // HOOKS
     // -----------------------
     
-    const history = useHistory();
+    // const {user, role} = useUserHook();
 
     // -----------------------
     // CONTEXTS
     // -----------------------
   
-    const { myContext, setMyContext } = useContext(Contexts);
-    let user = null;
-    let role = null;
-    if( myContext.user.name === undefined || myContext.user.role === undefined ) {
-        window.location.href = '/';
-    } else {
-        user = myContext.user.name;
-        role = myContext.user.role;
-    }
-    
-    const rUrl = (myContext.rUrl[myContext.env]);
+    const { context } = useContext(Context);
+    const requestURL = context.requestURL[context.ENV];
 
     // -----------------------
     // PROPS
     // -----------------------
 
-    const trail = props.location.state.trail;
+    let trail = props.location.state.trail;
+    if( trail === undefined) { window.location.href = '/'; }
+
+    let currentQuest = props.location.state.currentQuest;
+    if( currentQuest === undefined) { currentQuest = ""; }
+
+    // -----------------------
+    // STATES
+    // -----------------------
+    
+    const [quests, setQuests] = useState([]);
 
     // -----------------------
     // METHODS
@@ -61,20 +62,16 @@ function Stats(props) {
         }
     }
 
+    // -----------------------
+    // AXIOS REQUESTS
+    // -----------------------
+
     const fetchQuests = async () => {
-        console.log("in fetch");
-        const url = rUrl + 'quests';
         try {
-            const resp = await Axios.get( url );
+            const resp = await Axios.get( requestURL + 'quests' );
             return resp.data;
         } catch (err) { console.error(err); }
     };
-
-    // -----------------------
-    // STATS
-    // -----------------------
-    
-    const [quests, setQuests] = useState([]);
 
     // -----------------------
     // EFFETCS
@@ -82,7 +79,6 @@ function Stats(props) {
 
     // Effect happens on Mount
     useEffect( () => {
-        console.log("in effect");
         ( async () => {
             let newQuests = await fetchQuests();
             arangeQuests(newQuests);
@@ -113,7 +109,7 @@ function Stats(props) {
                 </thead>
                 <tbody>
                     {quests.map((el,index) => (
-                    <tr key={el.quest_id}>
+                    <tr key={el.quest_id} style={el.quest_id === currentQuest ? {background:`#fffbeb`} : {background:`white`}}>
                         <td><p>{index+1}</p></td>
                         <td>
                             <p>{el.player_name !== null ? el.player_name : el.player_id}</p>

@@ -1,8 +1,12 @@
-import React, {useState} from 'react';
+import React from 'react';
 import Header from '../components/Header.js'
 import LoginForm from '../components/LoginForm.js'
 
 function Login() {
+
+  // -----------------------
+  // RENDER
+  // -----------------------
 
   return (
       <>

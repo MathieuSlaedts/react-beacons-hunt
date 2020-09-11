@@ -1,16 +1,24 @@
 import React from 'react';
 
 const CameraControls = ({validateCapture, reShoot}) => {
+  
+  // -----------------------
+  // HANDLERS
+  // -----------------------
 
-    const handleValidation = (ev) => {
-        ev.preventDefault();
-        validateCapture();
-    }
+  const handleValidation = (ev) => {
+    ev.preventDefault();
+    validateCapture();
+  }
 
-    const handleReshoot = (ev) => {
-        ev.preventDefault();
-        reShoot();
-    }
+  const handleReshoot = (ev) => {
+    ev.preventDefault();
+    reShoot();
+  }
+  
+  // -----------------------
+  // RENDER
+  // -----------------------
 
   return (
     <div className="camera-controls">

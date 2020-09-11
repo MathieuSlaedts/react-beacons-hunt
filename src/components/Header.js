@@ -1,6 +1,11 @@
 import React from 'react';
 
 function Header(props) {
+  
+  // -----------------------
+  // RENDER
+  // -----------------------
+  
   return (
       <header>
         <div className="container">

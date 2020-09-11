@@ -1,14 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Camera from 'react-html5-camera-photo';
 import 'react-html5-camera-photo/build/css/index.css';
 import ImagePreview from './ImagePreview';
 import CameraControls from './CameraControls';
 
 const TakePicture = ({pictureTaken}) => {
+  
+    // -----------------------
+    // STATE
+    // -----------------------
+
+    const [dataUri, setDataUri] = useState('');
+    const [shoot, setShoot] = useState(true);
+  
+    // -----------------------
+    // METHODS
+    // -----------------------
     
     const handleTakePhotoAnimationDone = (dataUri) => {
-        setDataUri(dataUri);
-        setShoot(false);
+      setDataUri(dataUri);
+      setShoot(false);
     };
 
     const validateCapture = () => {
@@ -18,13 +29,10 @@ const TakePicture = ({pictureTaken}) => {
     const reShoot = () => {
       setShoot(true);
     }
-
-    const [dataUri, setDataUri] = useState('');
-    const [shoot, setShoot] = useState(true);
-    
-    useEffect(() => {
-        //console.log("src updated");
-    },[dataUri])
+  
+    // -----------------------
+    // RENDER
+    // -----------------------
     
     return (
         <div className="take-picture">

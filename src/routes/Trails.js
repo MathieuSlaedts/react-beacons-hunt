@@ -1,89 +1,56 @@
 import React, { useState, useEffect, useContext } from 'react';
-import Axios from 'axios';
-import uid from 'uid';
 import { Link } from "react-router-dom";
-import Header from '../components/Header.js'
-import Contexts from '../contexts/Contexts.js'
-import { useHistory } from "react-router-dom";
+import Context from '../contexts/Context.js';
+import Axios from 'axios';
+import Header from '../components/Header.js';
+import useUserHook from '../hooks/useUserHook.js';
 
 function Trails() {
 
     // -----------------------
-    // REACT ROUTER HISTORY
+    // HOOKS
     // -----------------------
     
-    const history = useHistory();
+    const {user, role} = useUserHook();
 
     // -----------------------
     // CONTEXTS
     // -----------------------
   
-    const { myContext, setMyContext } = useContext(Contexts);
-    let user = null;
-    let role = null;
-    if( myContext.user.name === undefined || myContext.user.role === undefined ) {
-        window.location.href = '/';
-    } else {
-        user = myContext.user.name;
-        role = myContext.user.role;
-    }
-    
-    const rUrl = (myContext.rUrl[myContext.env]);
-
-    // -----------------------
-    // METHODS
-    // -----------------------
-
-    const fetchTrails = async () => {
-        const url = rUrl + 'trails';
-        try {
-            const resp = await Axios.get( url );
-            return resp.data;
-        } catch (err) { console.error(err); }
-    };
-
-    const postTrail = async (trail) => {
-        console.log("post trail");
-        const url = rUrl + 'trails';
-        try {
-            const resp = await Axios.post( url, trail );
-            //return resp.data;
-        } catch (err) { console.error(err); }
-    };
-
-    const handleAddNewTrail = (ev) => {
-        ev.preventDefault();
-        console.log("add new trail");
-        const newtrail = {
-            trail_id: uid(),
-            name: "My new Trail",
-            beacons: [
-                { beacon_id: uid(), lat: 50.8243, lng: 4.38075 },
-                { beacon_id: uid(), lat: 50.82476598565123, lng: 4.380776882171632 },
-                { beacon_id: uid(), lat: 50.82391880992506, lng: 4.380873441696168 },
-                { beacon_id: uid(), lat: 50.82384425772526, lng: 4.382236003875733 },
-                { beacon_id: uid(), lat: 50.82418313040149, lng: 4.381710290908814 }
-            ]
-        };
-        postTrail(newtrail);
-    };
-
-    const handleChangeRole = async (ev) => {
-        ev.preventDefault();
-    
-        let newContext = {...myContext};
-          newContext.user = {
-            name: user,
-            role:  role === "player" ? "builder" : "player"
-          }
-        setMyContext(newContext);
-    };
+    const { context, setContext } = useContext(Context);
+    const requestURL = context.requestURL[context.ENV];
 
     // -----------------------
     // STATES
     // -----------------------
 
     const [trails, setTrails] = useState([]);
+
+    // -----------------------
+    // METHODS
+    // -----------------------
+
+    const handleChangeRole = async (ev) => {
+        ev.preventDefault();
+    
+        let newContext = {...context};
+          newContext.user = {
+            name: user,
+            role:  role === "player" ? "builder" : "player"
+          }
+          setContext(newContext);
+    };
+
+    // -----------------------
+    // AXIOS REQUEST
+    // -----------------------
+
+    const fetchTrails = async () => {
+        try {
+            const resp = await Axios.get( requestURL + 'trails' );
+            return resp.data;
+        } catch (err) { console.error(err); }
+    };
 
     // -----------------------
     // EFFETCS
@@ -105,7 +72,7 @@ function Trails() {
                     
                     { role === "builder" &&
                     <Link 
-                        to={{ pathname: "trail" }}
+                        to={{ pathname: "create-trail" }}
                         className="add-trail-btn button is-link">Créer un nouveau parcours</Link>
                     }
                     
@@ -122,7 +89,7 @@ function Trails() {
                                     
                                     { role === "player" &&
                                     <Link
-                                    to={{ pathname: "/trail", state: { trail: el } }}
+                                    to={{ pathname: "/play-trail", state: { trail: el } }}
                                     className="button">Jouer</Link>
                                     }
                                     

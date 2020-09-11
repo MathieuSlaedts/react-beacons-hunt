@@ -1,5 +1,5 @@
 import React, { useContext, useRef } from 'react';
-import Contexts from '../contexts/Contexts.js';
+import Context from '../contexts/Context.js';
 import { useHistory } from "react-router-dom";
 
 function LoginForm() {
@@ -14,7 +14,7 @@ function LoginForm() {
   // CONTEXTS
   // -----------------------
 
-  const { myContext, setMyContext } = useContext(Contexts);
+  const { context, setContext } = useContext(Context);
 
   // -----------------------
   // REFS
@@ -30,12 +30,12 @@ function LoginForm() {
   const handleSubmit = (ev) => {
     ev.preventDefault();
     
-    let newContext = {...myContext};
+    let newContext = {...context};
       newContext.user = {
         name: nameFld.current.value,
         role: roleFld.current.value
       }
-    setMyContext(newContext);
+      setContext(newContext);
     history.push("/trails");
   }
 

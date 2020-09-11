@@ -11,27 +11,9 @@ body {
   color: #363636;
 }
 
-.temp-nav {
-  background-color: #282c34;
-  margin: 0;
-  padding: 0 2rem;
-  height: 2rem;
-  line-height: 2rem;
-
-  .container {
-    display: grid;
-    grid-template-columns: auto auto auto auto auto;
-  }
-
-  a {
-    color: #eee;
-  }
-}
-
 header {
   background-color: #282c34;
   color: #eee;
-  padding: 0 2rem;
   padding: 0;
 }
 
@@ -127,7 +109,7 @@ main:not(.no-pad) {
 .map-container {
   background: red;
   width: 100vw;
-  height: calc(100vh - 6rem);
+  height: calc(100vh - 4rem);
   overflow: hidden;
 }
 
@@ -191,7 +173,8 @@ main:not(.no-pad) {
 }
 
 
-.footer {
+.remaining-beacons,
+.create-trail-form {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -201,12 +184,13 @@ main:not(.no-pad) {
   padding: 2rem;
   width: 100%;
   z-index: 9998;
+}
 
-  form {
-    display: grid;
-    grid-template-columns: auto min-content;
-    grid-gap: 1rem;
-  }
+
+.create-trail-form  {
+  display: grid;
+  grid-template-columns: auto min-content;
+  grid-gap: 1rem;
 }
 
 // Camera
