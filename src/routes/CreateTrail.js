@@ -52,6 +52,12 @@ function CreateTrail(props) {
     setBeacons(prevBeacons => [...prevBeacons, {beacon_id: uid(), lat: lat, lng: lng}]);
   };
 
+  // This is coming from child Map.js
+  const beaconCaptured = (id) => {
+      const newBeacons = [...beacons].filter(newBeacon => newBeacon.beacon_id !== id);
+      setBeacons([...newBeacons]);
+  };
+
   const publishTrail = async (ev) => {
     ev.preventDefault();
     const newTrail = {
@@ -85,6 +91,7 @@ function CreateTrail(props) {
             <Map
               beacons={beacons}
               mapClicked={mapClicked}
+              beaconCaptured={beaconCaptured}
             />
             <form className="create-trail-form" onSubmit={publishTrail}>
               <input className="input" type="text" placeholder="Nom du trail" ref={newTrailNameFld} />
