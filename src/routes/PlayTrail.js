@@ -178,7 +178,7 @@ function PlayTrail(props) {
 
     return (
         <>
-            <Header title={`Parcours`} />
+            <Header title={trail.name} />
             <main className="no-pad">
                 <Map
                     beacons={remainingBeacons}

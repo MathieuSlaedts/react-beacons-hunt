@@ -86,7 +86,7 @@ function CreateTrail(props) {
 
   return (
     <>
-      <Header title={`Parcours`} />
+      <Header title={`Créer un parcours`} />
       <main className="no-pad">
             <Map
               beacons={beacons}
